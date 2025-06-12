@@ -7,16 +7,24 @@
 </head>
 <body class="bg-white min-h-screen">
 
-    <!-- Navbar -->
-    <nav class="bg-white shadow p-4">
-        <div class="flex items-center space-x-3 text-xl font-bold text-gray-800">
-            <img src="{{ asset('img/sisfo.png') }}" alt="Logo" class="h-8 w-8">
-            <span>System Information FM</span>
+    <!-- Navbar (sama seperti halaman home) -->
+    <nav class="w-full bg-white shadow-sm fixed top-0 left-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between h-16">
+            <div class="flex items-center space-x-2">
+                <img src="{{ asset('img/sisfo.png') }}" alt="System Information FM Logo" class="h-8 w-8">
+                <span class="font-bold text-lg text-gray-900">System Information FM</span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="{{ url('/home') }}" class="text-gray-700 hover:text-blue-600 transition">Home</a>
+                <a href="{{ url('/projectdata') }}" class="text-blue-600 font-semibold border-b-2 border-blue-600 pb-1 transition">Project Saya</a>
+                <a href="{{ url('/tentangkami') }}" class="text-gray-700 hover:text-blue-600 transition">Tentang Pengembang</a>
+                <a href="{{ url('/login') }}" class="px-4 py-1 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Login</a>
+            </div>
         </div>
     </nav>
 
     <!-- Baris: Field Management + Button -->
-    <div class="flex justify-between items-center px-20 py-4 bg-white">
+    <div class="flex justify-between items-center px-20 py-4 bg-white pt-20">
         <h2 class="text-lg font-semibold text-gray-800">Field Management</h2>
         <a href="{{ url('/createproject') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
             + Create Project
