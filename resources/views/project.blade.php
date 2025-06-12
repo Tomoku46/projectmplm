@@ -18,7 +18,7 @@
                 <a href="{{ url('/home') }}" class="text-gray-700 hover:text-blue-600 transition">Home</a>
                 <a href="{{ url('/projectdata') }}" class="text-blue-600 font-semibold border-b-2 border-blue-600 pb-1 transition">Project Saya</a>
                 <a href="{{ url('/tentangkami') }}" class="text-gray-700 hover:text-blue-600 transition">Tentang Pengembang</a>
-                <a href="{{ url('/login') }}" class="px-4 py-1 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Login</a>
+                
             </div>
         </div>
     </nav>

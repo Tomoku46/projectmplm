@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use App\Models\ProjectDetail;
 use App\Models\Project;
@@ -20,7 +21,9 @@ class ProjectDetailController extends Controller
     public function create($project_id)
     {
         $project = Project::findOrFail($project_id);
-        return view('addcashflow', compact('project'));
+        $lastYear = ProjectDetail::where('project_id', $project_id)->max('year');
+        $nextYear = $lastYear ? $lastYear + 1 : 1;
+        return view('addcashflow', compact('project', 'nextYear'));
     }
 
     // Simpan detail cashflow baru
@@ -30,16 +33,14 @@ class ProjectDetailController extends Controller
             'year' => 'required|integer',
             'production' => 'nullable|numeric',
             'income' => 'nullable|numeric',
-            'invest_capital' => 'nullable|numeric',
-            'invest_non_capital' => 'nullable|numeric',
             'operational' => 'nullable|numeric',
             'depreciation' => 'nullable|numeric',
-            'taxable_income' => 'nullable|numeric',
             'tax' => 'nullable|numeric',
+            'taxable_income' => 'nullable|numeric',
             'ncf' => 'nullable|numeric',
         ]);
         $validated['project_id'] = $project_id;
-        ProjectDetail::create($validated);
+        \App\Models\ProjectDetail::create($validated);
 
         return redirect()->route('projectdetail.index', $project_id)
             ->with('success', 'Cashflow detail added.');
@@ -48,20 +49,19 @@ class ProjectDetailController extends Controller
     // Form edit detail cashflow
     public function edit($id)
     {
-        $detail = ProjectDetail::findOrFail($id);
-        return view('editcashflow', compact('detail'));
+        $detail = \App\Models\ProjectDetail::findOrFail($id);
+        $project = $detail->project; // pastikan relasi project() ada di model ProjectDetail
+        return view('edit', compact('detail', 'project'));
     }
 
     // Update detail cashflow
     public function update(Request $request, $id)
     {
-        $detail = ProjectDetail::findOrFail($id);
+        $detail = \App\Models\ProjectDetail::findOrFail($id);
         $validated = $request->validate([
             'year' => 'required|integer',
             'production' => 'nullable|numeric',
             'income' => 'nullable|numeric',
-            'invest_capital' => 'nullable|numeric',
-            'invest_non_capital' => 'nullable|numeric',
             'operational' => 'nullable|numeric',
             'depreciation' => 'nullable|numeric',
             'taxable_income' => 'nullable|numeric',
@@ -69,18 +69,30 @@ class ProjectDetailController extends Controller
             'ncf' => 'nullable|numeric',
         ]);
         $detail->update($validated);
-
-        return back()->with('success', 'Cashflow detail updated.');
+        return redirect()->route('projectdetail.index', $detail->project_id)->with('success', 'Cashflow updated!');
     }
 
     // Hapus detail cashflow
     public function destroy($id)
     {
-        $detail = ProjectDetail::findOrFail($id);
+        $detail = \App\Models\ProjectDetail::findOrFail($id);
         $project_id = $detail->project_id;
         $detail->delete();
+        return redirect()->route('projectdetail.index', $project_id)->with('success', 'Cashflow deleted!');
+    }
 
-        return redirect()->route('projectdetail.index', $project_id)
-            ->with('success', 'Cashflow detail deleted.');
+    // Ekspor ke PDF
+    public function exportPdf(Request $request, $project_id)
+    {
+        $project = \App\Models\Project::findOrFail($project_id);
+        $projectdetails = \App\Models\ProjectDetail::where('project_id', $project_id)->get();
+        $lineChart = $request->input('line_chart');
+        $barChart = $request->input('bar_chart');
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('export_cashflow_pdf', compact('project', 'projectdetails', 'lineChart', 'barChart'));
+        return response($pdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="cashflow-details-with-chart.pdf"',
+        ]);
     }
 }

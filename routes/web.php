@@ -46,4 +46,6 @@ Route::get('/tentangkami', function () {
 Route::get('/addcashflow', function () {
     return view('addcashflow');
 });
+Route::get('/addcashflow/{project}', [ProjectDetailController::class, 'create']);
+Route::post('/project/{project}/export-pdf', [ProjectDetailController::class, 'exportPdf'])->name('project.exportPdf');
 

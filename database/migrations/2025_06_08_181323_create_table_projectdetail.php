@@ -14,15 +14,13 @@ return new class extends Migration
         Schema::create('projectdetail', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('project_id');
-            $table->integer('year');
+            $table->integer('year')->nullable();
             $table->decimal('production', 15, 2)->nullable();
             $table->decimal('income', 15, 2)->nullable();
-            $table->decimal('invest_capital', 15, 2)->nullable();
-            $table->decimal('invest_non_capital', 15, 2)->nullable();
             $table->decimal('operational', 15, 2)->nullable();
             $table->decimal('depreciation', 15, 2)->nullable();
-            $table->decimal('taxable_income', 15, 2)->nullable();
             $table->decimal('tax', 15, 2)->nullable();
+            $table->decimal('taxable_income', 15, 2)->nullable();
             $table->decimal('ncf', 15, 2)->nullable();
             $table->timestamps();
 
